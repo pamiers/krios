@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'krios'
+
+include 'krios-base-platform'
+include 'krios-container-txp'
+
