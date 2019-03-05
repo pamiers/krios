@@ -6,6 +6,9 @@ HELP.md
 /krios-base-platform/out/
 /krios-container-txp/out/
 
+/krios-base-platform/build/
+/krios-container-txp/build/
+
 *.class
 .DS_Store
 
