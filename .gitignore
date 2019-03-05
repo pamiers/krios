@@ -3,6 +3,12 @@ HELP.md
 /build/
 !gradle/wrapper/gradle-wrapper.jar
 
+/krios-base-platform/out/
+/krios-container-txp/out/
+
+*.class
+.DS_Store
+
 ### STS ###
 .apt_generated
 .classpath
