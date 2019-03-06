@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${application.log.dir:-logs}/application_${port:-default}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${application.log.dir:-logs}/application_${port:-default}.log.%i.%d{yyyy-MM-dd}.gz
+            </fileNamePattern>
+            <maxFileSize>500MB</maxFileSize>
+            <maxHistory>180</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${application.log.dir:-logs}/json_application_${port:-default}.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${application.log.dir:-logs}/json_application_${port:-default}.log.%i.%d{yyyy-MM-dd}.gz
+            </fileNamePattern>
+            <maxFileSize>500MB</maxFileSize>
+            <maxHistory>180</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeCallerData>true</includeCallerData>
+            <fieldNames class="net.logstash.logback.fieldnames.ShortenedFieldNames"/>
+            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSS</timestampPattern>
+            <fieldNames>
+                <timestamp>request_time</timestamp>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
+    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+    <springProfile name="develop">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+    <springProfile name="sandbox">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+    <springProfile name="beta">
+        <root level="ERROR">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+    <springProfile name="production">
+        <root level="ERROR">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="JSON_FILE"/>
+            <appender-ref ref="SENTRY"/>
+        </root>
+    </springProfile>
+    <springProfile scope="context" name="port" source="server.port"/>
+
+</configuration>

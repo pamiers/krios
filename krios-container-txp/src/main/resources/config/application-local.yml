@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: local
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+    beans:
+      cache:
+        time-to-live: 10s
